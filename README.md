@@ -78,21 +78,27 @@ openssl rand -hex 32  # ENCRYPTION_KEY
 
 #### Cài đặt PostgreSQL:
 
-**macOS:**
+**Ví dụ với Docker (khuyến nghị):**
 
 ```bash
-brew install postgresql
-brew services start postgresql
+# Chạy PostgreSQL container
+docker run --name env-manager-db \
+  -e POSTGRES_DB=env_manager \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=password \
+  -p 5432:5432 \
+  -d postgres:15
+
+# Kiểm tra container đang chạy
+docker ps
 ```
 
-**Windows:**
+**Hoặc sử dụng bất kỳ PostgreSQL instance nào khác** (local, cloud, etc.)
 
-- Tải và cài đặt từ: https://www.postgresql.org/download/windows/
+Cập nhật `DATABASE_URL` trong `.env` theo database của bạn:
 
-#### Tạo database:
-
-```bash
-createdb env_manager
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/env_manager"
 ```
 
 #### Chạy migrations:
