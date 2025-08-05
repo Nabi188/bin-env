@@ -26,10 +26,7 @@ export async function GET(
       ...project,
       envFiles: project.envFiles.map((file) => {
         try {
-          console.log("🔍 Decrypting file in project route:", file.name);
-          console.log("🔒 Encrypted:", file.rawContent);
           const decrypted = decrypt(file.rawContent);
-          console.log("🔓 Decrypted:", decrypted);
           return {
             ...file,
             rawContent: decrypted,

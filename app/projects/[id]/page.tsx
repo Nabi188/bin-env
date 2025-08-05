@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Copy, Clipboard } from "lucide-react";
@@ -29,20 +29,14 @@ export default function ProjectDetailPage() {
   const [editingFile, setEditingFile] = useState<EnvFile | null>(null);
   const [formData, setFormData] = useState({ name: "", rawContent: "" });
 
-  useEffect(() => {
-    if (params.id) {
-      fetchProject();
-    }
-  }, [params.id]);
-
-  const fetchProject = async () => {
+  const fetchProject = useCallback(async () => {
     try {
       const response = await fetch(`/api/projects/${params.id}`);
       if (response.ok) {
         const data = await response.json();
         console.log("🔍 Frontend received project data:", data);
         console.log("🔍 ENV files:", data.envFiles);
-        data.envFiles?.forEach((file: any, index: number) => {
+        data.envFiles?.forEach((file: EnvFile, index: number) => {
           console.log(`📄 File ${index + 1} (${file.name}):`, file.rawContent);
         });
         setProject(data);
@@ -54,7 +48,13 @@ export default function ProjectDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
+
+  useEffect(() => {
+    if (params.id) {
+      fetchProject();
+    }
+  }, [params.id, fetchProject]);
 
   const handleCreateOrUpdateEnvFile = async (e: React.FormEvent) => {
     e.preventDefault();

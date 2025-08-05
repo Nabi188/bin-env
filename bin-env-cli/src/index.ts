@@ -2,59 +2,84 @@
 
 import { Command } from "commander";
 import chalk from "chalk";
-import { loginCommand } from "./commands/login";
-import { logoutCommand } from "./commands/logout";
-import { pullCommand } from "./commands/pull";
+import { readFileSync } from "fs";
+import { join } from "path";
+import {
+  loginCommand,
+  logoutCommand,
+  pullCommand,
+  statusCommand,
+  versionCommand,
+  updateCommand,
+} from "./commands";
+
+// Xử lý flag version sớm để không cần load commander đầy đủ
+const args = process.argv;
+if (args.includes("-v") || args.includes("--version") || args.includes("-V")) {
+  versionCommand().then(() => process.exit(0));
+}
+
+// Đọc version cho CLI nếu cần
+const { version } = JSON.parse(
+  readFileSync(join(__dirname, "../package.json"), "utf8")
+);
 
 const program = new Command();
 
 program
   .name("bin-env")
   .description("CLI tool for managing environment files")
-  .version("1.0.0");
+  .version(version, "-v, --version", "Show version information") // auto handle flags
+  .addHelpText(
+    "after",
+    "\nRun 'bin-env update' to check for the latest version."
+  );
 
-// Login command
+// Định nghĩa các lệnh
 program
   .command("login")
   .description("Login to the environment file server")
-  .action(async () => {
-    await loginCommand();
-  });
+  .action(loginCommand);
 
-// Logout command
 program
   .command("logout")
   .description("Logout and clear authentication data")
-  .action(async () => {
-    await logoutCommand();
-  });
+  .action(logoutCommand);
 
-// Pull command
 program
   .command("pull")
   .description("Pull environment files from the server")
-  .action(async () => {
-    await pullCommand();
-  });
+  .action(pullCommand);
 
-// Global error handling
-process.on("uncaughtException", (error) => {
-  console.log(chalk.red("❌ An unexpected error occurred:"));
-  console.log(chalk.red(error.message));
+program
+  .command("status")
+  .description("Check current login status and base URL")
+  .action(statusCommand);
+
+program
+  .command("version")
+  .description("Show version information and check for updates")
+  .action(versionCommand);
+
+program
+  .command("update")
+  .description("Update bin-env to the latest version")
+  .action(updateCommand);
+
+// Global error handlers
+process.on("uncaughtException", (err) => {
+  console.error(chalk.red("❌ Uncaught exception:"), err.message);
   process.exit(1);
 });
 
 process.on("unhandledRejection", (reason) => {
-  console.log(chalk.red("❌ An unexpected error occurred:"));
-  console.log(chalk.red(String(reason)));
+  console.error(chalk.red("❌ Unhandled rejection:"), String(reason));
   process.exit(1);
 });
 
-// Handle Ctrl+C gracefully
 process.on("SIGINT", () => {
   console.log(chalk.yellow("\n⚠️  Operation cancelled by user"));
   process.exit(0);
 });
 
-// Parse command line arguments
 program.parse();
