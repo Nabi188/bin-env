@@ -1,5 +1,0 @@
-{
-  "baseUrl": "http://localhost:3000",
-  "token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJCaW4gc2nDqnUgxJHhurlwIHRyYWkiLCJpYXQiOjE3NTQzMzMzNjN9.uErLJ5Qdm-Cfl4Qghx5kZubAtCOD0kEnwHY7RS9e8RM",
-  "timestamp": 1754333363171
-}
