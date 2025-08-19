@@ -55,6 +55,21 @@ export async function POST(
       );
     }
 
+    // Check if env file with same name already exists in this project
+    const existingFile = await prisma.envFile.findFirst({
+      where: {
+        projectId: id,
+        name: name,
+      },
+    });
+
+    if (existingFile) {
+      return NextResponse.json(
+        { error: "Environment file with this name already exists" },
+        { status: 409 }
+      );
+    }
+
     // Encrypt content before saving
     const encryptedContent = encrypt(rawContent);
 

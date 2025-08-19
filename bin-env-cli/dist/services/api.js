@@ -73,6 +73,55 @@ class ApiClient {
             throw new Error("Failed to fetch environment files. Please try again.");
         }
     }
+    async createEnvFile(projectId, name, rawContent) {
+        const auth = auth_1.authService.getAuth();
+        if (!auth) {
+            throw new Error("Not authenticated. Please login first.");
+        }
+        try {
+            const response = await this.client.post(`/api/projects/${projectId}/env-files`, { name, rawContent }, {
+                headers: {
+                    Authorization: `Bearer ${auth.token}`,
+                },
+            });
+            return response.data;
+        }
+        catch (error) {
+            if (error.response?.status === 401) {
+                throw new Error("Authentication expired. Please login again.");
+            }
+            if (error.response?.status === 404) {
+                throw new Error("Project not found.");
+            }
+            if (error.response?.status === 409) {
+                throw new Error("Environment file with this name already exists.");
+            }
+            throw new Error("Failed to create environment file. Please try again.");
+        }
+    }
+    async updateEnvFile(projectId, envFileId, rawContent) {
+        const auth = auth_1.authService.getAuth();
+        if (!auth) {
+            throw new Error("Not authenticated. Please login first.");
+        }
+        try {
+            const response = await this.client.put(`/api/projects/${projectId}/env-files/${envFileId}`, { rawContent }, {
+                headers: {
+                    Authorization: `Bearer ${auth.token}`,
+                },
+            });
+            return response.data;
+        }
+        catch (error) {
+            if (error.response?.status === 401) {
+                throw new Error("Authentication expired. Please login again.");
+            }
+            if (error.response?.status === 404) {
+                throw new Error("Environment file not found.");
+            }
+            throw new Error("Failed to update environment file. Please try again.");
+        }
+    }
 }
 exports.ApiClient = ApiClient;
 function createApiClient() {

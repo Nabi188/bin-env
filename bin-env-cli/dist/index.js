@@ -36,6 +36,10 @@ program
     .description("Pull environment files from the server")
     .action(commands_1.pullCommand);
 program
+    .command("push")
+    .description("Push local .env file to the server")
+    .action(commands_1.pushCommand);
+program
     .command("status")
     .description("Check current login status and base URL")
     .action(commands_1.statusCommand);

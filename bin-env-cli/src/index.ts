@@ -8,6 +8,7 @@ import {
   loginCommand,
   logoutCommand,
   pullCommand,
+  pushCommand,
   statusCommand,
   versionCommand,
   updateCommand,
@@ -50,6 +51,11 @@ program
   .command("pull")
   .description("Pull environment files from the server")
   .action(pullCommand);
+
+program
+  .command("push")
+  .description("Push local .env file to the server")
+  .action(pushCommand);
 
 program
   .command("status")

@@ -19,6 +19,8 @@ export declare class ApiClient {
     }>;
     getProjects(): Promise<Project[]>;
     getEnvFiles(projectId: string): Promise<EnvFile[]>;
+    createEnvFile(projectId: string, name: string, rawContent: string): Promise<EnvFile>;
+    updateEnvFile(projectId: string, envFileId: string, rawContent: string): Promise<EnvFile>;
 }
 export declare function createApiClient(): ApiClient;
 //# sourceMappingURL=api.d.ts.map
